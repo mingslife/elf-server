@@ -1,0 +1,7 @@
+<footer class="mt-4 py-5 elf-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">{{ .Settings["app.footer"] | raw }}</div>
+    </div>
+  </div>
+</footer>

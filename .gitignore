@@ -1,0 +1,13 @@
+.DS_Store
+/upload/
+
+# except for .gitkeep
+!.gitkeep
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

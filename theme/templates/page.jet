@@ -1,0 +1,8 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+  {{ range .Posts }}
+    {{ include "card.jet" }}
+  {{ end }}
+  {{ pageLink := "/page/{page}" }}
+  {{ include "pagination.jet" }}
+{{ end }}

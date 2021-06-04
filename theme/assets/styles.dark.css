@@ -1,0 +1,122 @@
+@media (prefers-color-scheme: dark) {
+  .elf-navbar .navbar-brand {
+    color: rgba(255,255,255);
+  }
+  .elf-navbar .navbar-toggler {
+    color: rgba(255,255,255,.8);
+  }
+  .elf-navbar .navbar-nav .nav-link {
+    color: rgba(255,255,255,.8);
+  }
+
+  .elf-card {
+    background-color: transparent;
+  }
+  .elf-card a {
+    color: #e1e1e1;
+  }
+
+  .elf-author a {
+    color: #e1e1e1;
+  }
+
+  .elf-footer {
+    background-color: #333;
+  }
+
+  .elf-comment__actions a {
+    color: #999;
+  }
+
+  .markdown-body h1 .octicon-link,
+  .markdown-body h2 .octicon-link,
+  .markdown-body h3 .octicon-link,
+  .markdown-body h4 .octicon-link,
+  .markdown-body h5 .octicon-link,
+  .markdown-body h6 .octicon-link {
+    color: #e1e1e1;
+  }
+
+  .markdown-body {
+    color: #e1e1e1;
+  }
+
+  .markdown-body a {
+    color: #5080b3;
+    text-decoration: none;
+  }
+
+  .markdown-body hr {
+    border-bottom: 1px solid #dfe2e5;
+  }
+
+  .markdown-body kbd {
+    color: #444d56;
+    background-color: #fafbfc;
+    border: 1px solid #d1d5da;
+    box-shadow: inset 0 -1px 0 #d1d5da;
+  }
+
+  .markdown-body :checked+.radio-label {
+    border-color: #5080b3;
+  }
+
+  .markdown-body .border {
+    border: 1px solid #e1e4e8!important;
+  }
+
+  .markdown-body .border-bottom {
+    border-bottom: 1px solid #e1e4e8!important;
+  }
+
+  .markdown-body hr {
+    border-bottom-color: #eee;
+  }
+
+  .markdown-body kbd {
+    color: #444d56;
+    background-color: #fafbfc;
+    border: 1px solid #d1d5da;
+    box-shadow: inset 0 -1px 0 #d1d5da;
+  }
+
+  .markdown-body hr {
+    background-color: #e1e4e8;
+  }
+
+  .markdown-body blockquote {
+    color: #6a737d;
+    border-left: .25em solid #dfe2e5;
+  }
+
+  .markdown-body h1,
+  .markdown-body h2 {
+    border-bottom: 1px solid #eaecef;
+  }
+
+  .markdown-body h6 {
+    color: #6a737d;
+  }
+
+  .markdown-body table td,
+  .markdown-body table th {
+    border: 1px solid #dfe2e5;
+  }
+
+  .markdown-body table tr {
+    background-color: transparent;
+    border-top: 1px solid #c6cbd1;
+  }
+
+  .markdown-body table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+  }
+
+  .markdown-body img {
+    background-color: #000;
+  }
+
+  .markdown-body code {
+    background-color: #555;
+  }
+}

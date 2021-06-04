@@ -1,0 +1,141 @@
+@charset "UTF-8";
+
+.elf-main {
+  min-height: calc(100vh - 232px);
+  padding-bottom: 1px; /* css hack */
+}
+
+.elf-navbar {}
+.elf-navbar .navbar-brand {
+  color: rgba(0,0,0);
+}
+.elf-navbar .navbar-toggler {
+  color: rgba(0,0,0,.8);
+}
+.elf-navbar .navbar-nav .nav-link {
+  color: rgba(0,0,0,.8);
+}
+
+.elf-card {}
+.elf-card a {
+  color: #333;
+}
+.elf-card a:hover {
+  text-decoration: none;
+}
+.elf-card__img {
+  display: block;
+  padding-bottom: 56.25%;
+  height: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.elf-author {
+  width: 300px;
+}
+.elf-author a {
+  color: #333;
+}
+.elf-author a:hover {
+  text-decoration: none;
+}
+.elf-author__avatar {
+  display: inline-block;
+}
+.elf-author__avatar img {
+  width: 36px;
+  height: 36px;
+}
+.elf-author__avatar.elf-author__avatar--large img {
+  width: 160px;
+  height: 160px;
+}
+.elf-author__info {
+  display: inline-block;
+  margin-left: 10px;
+  line-height: 1;
+}
+
+.elf-post {}
+.elf-post__meta {
+  max-width: 500px;
+}
+.elf-post__cover {
+  padding-bottom: 56.25%;
+  height: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.elf-post__content {
+  max-width: 800px;
+}
+.elf-post__content.elf-post__content--private {
+  max-width: 360px;
+}
+
+.elf-category__cover {
+  padding-bottom: 42.8571%;
+  height: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.elf-footer {
+  background-color: #eee;
+}
+
+.elf-comments {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.elf-comment {
+  margin: 30px 0;
+}
+.elf-comment__meta {
+}
+.elf-comment__content {
+  margin-top: 10px;
+}
+.elf-comment__actions {}
+.elf-comment__actions a {
+  color: #999;
+}
+
+.elf-captcha__image {
+  width: 108px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.elf-copy {
+  height: 0;
+}
+
+.elf-corner {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+.elf-corner .btn {
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 50%;
+}
+.elf-corner .dropup .dropdown-toggle::after {
+  display: none;
+}
+.elf-corner__menu {
+  max-height: 480px;
+  overflow-y: auto;
+}
+.elf-corner__menu .dropdown-item {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

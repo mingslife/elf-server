@@ -1,0 +1,63 @@
+{{ startPage, endPage := 2, .Pages - 1 }}
+{{ if .Pages > 7 }}
+  {{ startPage = 2 }}
+  {{ if .Page > 4 }}
+    {{ if .Page > .Pages - 5 }}
+      {{ startPage = .Pages - 5 }}
+    {{ else }}
+      {{ startPage = .Page - 1 }}
+    {{ end }}
+  {{ end }}
+  {{ endPage = startPage + 4 }}
+{{ end }}
+<nav class="pb-1">
+  <ul class="pagination justify-content-center">
+{{ if .Page == 1 }}
+    <li class="page-item disabled"><span class="page-link" aria-label="Previous"><span aria-hidden="true">&lsaquo;</span></span></li>
+{{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + (.Page - 1), -1) }}" aria-label="Previous"><span aria-hidden="true">&lsaquo;</span></a></li>
+{{ end }}
+
+{{ if .Page == 1 }}
+    <li class="page-item active"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + 1, -1) }}">1</a></li>
+{{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "1", -1) }}">1</a></li>
+{{ end }}
+
+{{ if .Pages > 2 }}
+  {{ range _, page := ints(startPage, endPage + 1) }}
+    {{ if page == startPage || page == endPage }}
+      {{ if page == 2 || page == .Pages - 1 }}
+        {{ if .Page == page }}
+    <li class="page-item active"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + page, -1) }}">{{ page }}</a></li>
+        {{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + page, -1) }}">{{ page }}</a></li>
+        {{ end }}
+      {{ else }}
+    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+      {{ end }}
+    {{ else }}
+      {{ if .Page == page }}
+    <li class="page-item active"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + page, -1) }}">{{ page }}</a></li>
+      {{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + page, -1) }}">{{ page }}</a></li>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ if .Pages > 1 }}
+  {{ if .Page == .Pages }}
+    <li class="page-item active"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + .Pages, -1) }}">{{ .Pages }}</a></li>
+  {{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + .Pages, -1) }}">{{ .Pages }}</a></li>
+  {{ end }}
+{{ end }}
+
+{{ if .Page == .Pages }}
+    <li class="page-item disabled"><span class="page-link" aria-label="Next"><span aria-hidden="true">&rsaquo;</span></span></li>
+{{ else }}
+    <li class="page-item"><a class="page-link" href="{{ replace(pageLink, "{page}", "" + (.Page + 1), -1) }}" aria-label="Next"><span aria-hidden="true">&rsaquo;</span></a></li>
+{{ end }}
+  </ul>
+</nav>

@@ -1,0 +1,17 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+<div class="row">
+  <div class="col">
+    <h1>{{ .Category.CategoryName }}</h1>
+    <p>{{ .Category.Description }}</p>
+  {{ if .Category.Cover != "" }}
+    <div class="rounded mb-5 elf-category__cover" style="background-image: url({{ .Category.Cover }});"></div>
+  {{ end }}
+  </div>
+</div>
+  {{ range .Posts }}
+    {{ include "card.jet" }}
+  {{ end }}
+  {{ pageLink := "/category/" + .Category.CategoryName + "/{page}" }}
+  {{ include "pagination.jet" }}
+{{ end }}

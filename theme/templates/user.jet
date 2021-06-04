@@ -1,0 +1,22 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+<div class="row">
+  <div class="col">
+    <div class="text-center">
+      <div class="elf-author__avatar elf-author__avatar--large">
+        <img class="rounded-circle" src="{{ .User.Avatar }}" alt="avatar" />
+      </div>
+      <div class="mt-3 mb-4">
+        <div class="text-muted">{{ .User.Username }}</div>
+        <h1>{{ .User.Nickname }}</h1>
+        <p>{{ .User.Introduction }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+  {{ range .Posts }}
+    {{ include "card.jet" }}
+  {{ end }}
+  {{ pageLink := "/user/" + .User.Username + "/{page}" }}
+  {{ include "pagination.jet" }}
+{{ end }}

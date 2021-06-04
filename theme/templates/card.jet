@@ -1,0 +1,37 @@
+{{ postLink := "/post/" + .Route }}
+{{ authorLink := "/user/" + .User.Username }}
+{{ categoryLink := "/category/" + .Category.Route }}
+<article class="card border-0 mb-5 elf-card">
+  <div class="row no-gutters">
+    {{ if .Cover != "" }}
+    <div class="col-lg-6">
+      <a class="card-img rounded elf-card__img" href="{{ postLink }}" style="background-image: url({{ .Cover }});"></a>
+    </div>
+    {{ else }}
+    <div class="col-lg-3"></div>
+    {{ end }}
+    <div class="col-lg-6">
+      <div class="card-body p-1 pt-3 ml-lg-5">
+        <a href="{{ categoryLink }}"><small class="card-subtitle text-muted text-uppercase">{{ .Category.CategoryName }}</small></a>
+        <h2 class="card-title elf-card__title"><a href="{{ postLink }}">{{ .Title }}</a></h2>
+        <p class="card-text">
+        {{ if .IsPrivate || .Category.IsPrivate }}
+          <i class="fa fa-lock"></i>
+        {{ else }}
+          {{ .Description }}
+        {{ end }}
+        </p>
+        <div class="row mt-md-5 elf-author">
+          <a class="col col-auto pr-0 elf-author__avatar" href="{{ authorLink }}">
+            <img class="rounded-circle" src="{{ .User.Avatar }}" alt="avatar" />
+          </a>
+          <div class="col p-0 elf-author__info">
+            <div><a href="{{ authorLink }}"><small>{{ .User.Nickname }}</small></a></div>
+            <div class="text-muted"><small>{{ .CreatedAt }}</small></div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

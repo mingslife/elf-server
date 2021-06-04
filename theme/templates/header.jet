@@ -1,0 +1,37 @@
+{{ textHome := map("en", "Home", "zh", "首页") }}
+{{ textBlog := map("en", "Blog", "zh", "博客") }}
+<header class="my-3">
+  <nav class="navbar navbar-expand-lg elf-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="/">{{ .Settings["app.title"] }}</a>
+      <button class="navbar-toggler border-0 pr-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa fa-bars"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">{{ textHome[locale] }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/page">{{ textBlog[locale] }}</a>
+          </li>
+{{ range .Navigations }}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ .URL }}" target="{{ .Target }}">{{ .Label }}</a>
+          </li>
+{{ end }}
+        </ul>
+
+        <form class="form-inline ml-lg-1 justify-content-around">
+          {* <button type="button" class="btn"><i class="fa fa-rss"></i></button> *}
+          {* <button type="button" class="btn"><i class="fa fa-search"></i></button> *}
+          {* <button type="button" class="btn"><i class="fa fa-share-alt"></i></button> *}
+          {* <button type="button" class="btn"><i class="fa fa-moon"></i></button> *}
+          {* <button type="button" class="btn"><i class="fa fa-magic"></i></button> *}
+          {* <button type="button" class="btn"><i class="fa fa-ellipsis-v"></i></button> *}
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>

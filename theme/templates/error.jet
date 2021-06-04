@@ -1,0 +1,4 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+<p>Oops, something went wrong:(</p>
+{{ end }}

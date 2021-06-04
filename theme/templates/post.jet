@@ -1,0 +1,159 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+  {{ textLastUpdatedAt := map("en", "Last updated at", "zh", "最后更新于") }}
+  {{ textWriteComment := map("en", "Write comment", "zh", "写评论") }}
+  {{ textCommentIsClosed := map("en", "Comment is closed", "zh", "评论已关闭") }}
+  {{ textComment := map("en", "Comment", "zh", "评论") }}
+  {{ textNickname := map("en", "Nickname", "zh", "昵称") }}
+  {{ textEmail := map("en", "Email", "zh", "邮箱") }}
+  {{ textContent := map("en", "Content", "zh", "内容") }}
+  {{ textCaptcha := map("en", "Captcha", "zh", "验证码") }}
+  {{ textClose := map("en", "Close", "zh", "关闭") }}
+  {{ textSubmit := map("en", "Submit", "zh", "提交") }}
+
+  {{ postLink := "/post/" + .Post.Route }}
+  {{ authorLink := "/user/" + .Post.User.Username }}
+  {{ categoryLink := "/category/" + .Post.Category.Route }}
+<article class="elf-post">
+  <div class="mx-auto elf-post__meta">
+    <div>
+      <a href="{{ categoryLink }}"><small class="text-muted text-uppercase">{{ .Post.Category.CategoryName }}</small></a>
+      <h1>{{ .Post.Title }}</h1>
+    </div>
+    <p class="text-muted">{{ .Post.Description }}</p>
+    <div class="row elf-author">
+      <a class="col col-auto pr-0 elf-author__avatar" href="{{ authorLink }}">
+        <img class="rounded-circle" src="{{ .Post.User.Avatar }}" alt="avatar" />
+      </a>
+      <div class="col p-0 elf-author__info">
+        <div><a href="{{ authorLink }}"><small>{{ .Post.User.Nickname }}</small></a></div>
+        <div class="text-muted"><small>{{ .Post.CreatedAt }}</small></div>
+      </div>
+    </div>
+  </div>
+  {{ if .Post.Cover != "" }}
+  <div class="rounded mt-5 elf-post__cover" style="background-image: url({{ .Post.Cover }});"></div>
+  {{ end }}
+  <div class="my-5">
+  {{ if .Post.IsPrivate || .Post.Category.IsPrivate }}
+    <div class="card mx-auto elf-post__content elf-post__content--private" id="content-form">
+      <div class="card-body">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-lock"></i>
+            </span>
+          </div>
+          <input type="text" class="form-control" placeholder="Password" id="content-password" />
+          <div class="input-group-append">
+            <button class="btn btn-secondary" type="button" id="content-button">
+              <i class="fa fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{ end }}
+    <div class="mx-auto elf-post__content markdown-body">
+      <div id="content-body">
+        {{ .Post.Content | raw }}
+      </div>
+
+      <div class="text-center pt-5">
+        <small class="text-muted">{{ textLastUpdatedAt[locale] }} {{ .Post.UpdatedAt }}</small>
+      </div>
+    </div>
+  </div>
+</article>
+
+  {{ if .Settings["app.comment"] == "true" && .Post.IsCommentShown }}
+<div class="elf-comments">
+  <hr />
+
+    {{ if .Post.IsCommentEnabled }}
+  <button type="button" class="btn btn-light btn-block" data-toggle="modal" data-target="#comment-modal">{{ textWriteComment[locale] }}</button>
+    {{ else }}
+  <button type="button" class="btn btn-light btn-block" disabled>{{ textCommentIsClosed[locale] }}</button>
+    {{ end }}
+
+  <div id="comments-wrapper">
+    <!--<div class="elf-comment">
+      <div class="elf-comment__meta">
+        <a class="text-muted" href="#comment-1" name="comment-1">#1</a>
+        <strong>Ming</strong>
+        <small class="text-muted">2021-02-24 16:37:16 +0800 CST</small>
+        <div class="float-right elf-comment__actions">
+          <a href="#"><i class="fa fa-reply"></i></a>
+        </div>
+      </div>
+      <div class="elf-comment__content">Content here.</div>
+    </div>-->
+  </div>
+</div>
+
+<div class="modal fade elf-captcha" id="comment-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="comment-modal-title">{{ textComment[locale] }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form onsubmit="commentSubmit(); return false">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="comment-nickname">{{ textNickname[locale] }}</label>
+            <input type="text" class="form-control" id="comment-nickname" required maxlength="64" />
+          </div>
+          <div class="form-group">
+            <label for="comment-email">{{ textEmail[locale] }}</label>
+            <input type="email" class="form-control" id="comment-email" required maxlength="255" />
+          </div>
+          <div class="form-group">
+            <label for="comment-content">{{ textContent[locale] }}</label>
+            <textarea class="form-control" id="comment-content" rows="6" style="resize: none;" required maxlength="1000"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="comment-captcha">{{ textCaptcha[locale] }}</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="comment-captcha" required minlength="6" maxlength="6" />
+              <div class="input-group-append">
+                <span class="input-group-text p-0">
+                  <img class="elf-captcha__image" src="" alt="captcha" id="comment-captcha-image" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ textClose[locale] }}</button>
+          <button type="submit" class="btn btn-dark">{{ textSubmit[locale] }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="d-none d-md-flex flex-column elf-corner">
+  <div class="btn-group dropup">
+    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="0,10">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right elf-corner__menu" id="elf-corner__menu">
+      <a class="dropdown-item" href="#">Action</a>
+      <a class="dropdown-item" href="#">Another action</a>
+      <a class="dropdown-item" href="#">Something else here</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">Separated link</a>
+    </div>
+  </div>
+  <button type="button" class="btn btn-dark" id="gotop-button">
+    <i class="fa fa-chevron-up"></i>
+  </button>
+</div>
+
+<script>window.fetchComments = true</script>
+  {{ end }}
+
+{{ end }}
