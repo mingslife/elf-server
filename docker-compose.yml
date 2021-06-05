@@ -1,0 +1,27 @@
+version: "2"
+
+services:
+  mariadb:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: elf
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+  elf-server:
+    image: elf-server:latest
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      ELF_DB_HOST: mariadb
+      ELF_DB_NAME: elf
+    volumes:
+      - ./upload:/app/upload
+    ports:
+      - 5000:5000
