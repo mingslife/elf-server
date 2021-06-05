@@ -15,6 +15,7 @@ services:
 
   elf-server:
     image: elf-server:latest
+    build: .
     restart: always
     depends_on:
       - mariadb

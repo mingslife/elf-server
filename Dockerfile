@@ -10,6 +10,6 @@ WORKDIR /app
 VOLUME [ "/app/upload" ]
 EXPOSE 5000
 COPY --from=build /app/bin/elf-server .
-COPY resources .
-COPY theme .
+COPY resources resources
+COPY theme theme
 ENTRYPOINT [ "/app/elf-server" ]
