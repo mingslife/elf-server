@@ -88,7 +88,7 @@ func Seed() {
 		SettingKey:   "app.language",
 		SettingValue: "en",
 		SettingTag:   "Language",
-		IsPublic:     false,
+		IsPublic:     true,
 	}).Save()
 	(&Setting{
 		SettingKey:   "app.footer",
