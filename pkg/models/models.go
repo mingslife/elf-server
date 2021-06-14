@@ -122,7 +122,7 @@ func Seed() {
 	}).Save()
 	(&Setting{
 		SettingKey:   "app.inviteCode",
-		SettingValue: "console.log('Powered by ELF')",
+		SettingValue: "<script>console.log('Powered by ELF')</script>",
 		SettingTag:   utils.RandString(16),
 		IsPublic:     false,
 	}).Save()
