@@ -122,9 +122,15 @@ func Seed() {
 	}).Save()
 	(&Setting{
 		SettingKey:   "app.inviteCode",
-		SettingValue: "<script>console.log('Powered by ELF')</script>",
-		SettingTag:   utils.RandString(16),
+		SettingValue: utils.RandString(16),
+		SettingTag:   "Invite Code",
 		IsPublic:     false,
+	}).Save()
+	(&Setting{
+		SettingKey:   "app.autoSave",
+		SettingValue: "0",
+		SettingTag:   "Auto Save Duration",
+		IsPublic:     true,
 	}).Save()
 
 	adminPassword := utils.RandString(8)
