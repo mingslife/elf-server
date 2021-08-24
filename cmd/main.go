@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"elf-server/pkg/conf"
+	"elf-server/pkg/migrations"
 	"elf-server/pkg/models"
 	"elf-server/pkg/router"
 )
@@ -13,7 +14,7 @@ func main() {
 	cfg := conf.ParserConfigFromEnv()
 
 	models.InitDB(cfg.DbHost, cfg.DbPort, cfg.DbUser, cfg.DbPwd, cfg.DbName, cfg.Debug)
-	models.Seed()
+	migrations.ExecuteMigrations()
 
 	router := router.NewRouter(cfg)
 
