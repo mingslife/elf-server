@@ -1,11 +1,9 @@
 package models
 
 import (
-	"context"
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/golang/glog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -52,23 +50,23 @@ func InitDB(host string, port int, user string, pwd string, database string, deb
 	sqlDB.SetConnMaxLifetime(30 * time.Minute)
 }
 
-var RDB *redis.Client
+// var RDB *redis.Client
 
-func InitRDB(host string, port int, password string, db int) {
-	RDB = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", host, port),
-		Password: password,
-		DB:       db,
-	})
+// func InitRDB(host string, port int, password string, db int) {
+// 	RDB = redis.NewClient(&redis.Options{
+// 		Addr:     fmt.Sprintf("%s:%d", host, port),
+// 		Password: password,
+// 		DB:       db,
+// 	})
 
-	err := RDB.Ping(context.Background()).Err()
-	if err != nil {
-		glog.Fatalf("Failed to connect redis: %v", err)
-		return
-	}
+// 	err := RDB.Ping(context.Background()).Err()
+// 	if err != nil {
+// 		glog.Fatalf("Failed to connect redis: %v", err)
+// 		return
+// 	}
 
-	// do nothing
-}
+// 	// do nothing
+// }
 
 func Offset(limit, page int) int {
 	if page != -1 && limit != -1 {
