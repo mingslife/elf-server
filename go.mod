@@ -3,12 +3,13 @@ module elf-server
 go 1.13
 
 require (
-	github.com/CloudyKit/jet/v6 v6.0.2
+	github.com/CloudyKit/jet/v6 v6.1.0
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-redis/redis/v8 v8.11.3 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/google/uuid v1.1.4
 	github.com/importcjj/sensitive v0.0.0-20200106142752-42d1c505be7b

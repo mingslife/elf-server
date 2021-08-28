@@ -14,6 +14,7 @@ import (
 
 type Post struct {
 	ID               uint       `json:"id" gorm:"primary_key;autoIncrement"`
+	UniqueID         string     `json:"uniqueId" gorm:"size:36;unique"`
 	Title            string     `json:"title" gorm:"not null;size:128"`
 	Keywords         string     `json:"keywords" gorm:"size:255"`
 	Description      string     `json:"description" gorm:"size:255"`
@@ -207,7 +208,7 @@ func GetPostForPortal(route string) *Post {
 	routeHash := utils.Md5(route)
 	var v Post
 	if err := DB.Select([]string{
-		"id", "title", "posts.keywords", "posts.description", "user_id", "category_id", "cover", "source_type", "content", "route", "is_published", "published_at", "is_private", "password", "is_comment_enabled", "is_comment_shown", "posts.created_at", "posts.updated_at",
+		"id", "unique_id", "title", "posts.keywords", "posts.description", "user_id", "category_id", "cover", "source_type", "content", "route", "is_published", "published_at", "is_private", "password", "is_comment_enabled", "is_comment_shown", "posts.created_at", "posts.updated_at",
 	}).
 		Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Select([]string{"id", "username", "nickname", "avatar"})

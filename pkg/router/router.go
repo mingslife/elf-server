@@ -26,7 +26,12 @@ func NewRouter(cfg *conf.Config) *gin.Engine {
 		ContentType:     "text/html; charset=utf-8",
 		DevelopmentMode: cfg.Debug,
 	})
-	controllers.NewPortalController(router)
+	portalRouter := router.Group("/")
+	if cfg.Log {
+		portalRouter.Use(middleware.NewLogMiddleware(
+			&middleware.LogMiddlewareConfig{Path: "./log"}))
+	}
+	controllers.NewPortalController(portalRouter)
 
 	apiRouter := router.Group("/api/v1")
 	apiRouter.Use(middleware.NewCorsMiddleware())

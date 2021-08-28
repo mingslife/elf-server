@@ -11,6 +11,7 @@ type Config struct {
 	Host  string `split_words:"true" default:"127.0.0.1"`
 	Port  int    `split_words:"true" default:"5000"`
 	Debug bool   `split_words:"true" default:"true"`
+	Log   bool   `split_words:"true" default:"true"`
 
 	DbHost string `split_words:"true" default:"127.0.0.1"`
 	DbPort int    `split_words:"true" default:"3306"`
@@ -30,6 +31,7 @@ func ParseConfig() *Config {
 	flag.StringVar(&cfg.Host, "host", "127.0.0.1", "server host")
 	flag.IntVar(&cfg.Port, "port", 5000, "server port")
 	flag.BoolVar(&cfg.Debug, "debug", true, "debug mode")
+	flag.BoolVar(&cfg.Log, "log", true, "output access log")
 	flag.StringVar(&cfg.DbHost, "db-host", "127.0.0.1", "database host")
 	flag.IntVar(&cfg.DbPort, "db-port", 3306, "database port")
 	flag.StringVar(&cfg.DbUser, "db-user", "root", "database user")

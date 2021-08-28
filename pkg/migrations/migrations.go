@@ -26,4 +26,6 @@ func ExecuteMigrations() {
 			break
 		}
 	}
+
+	migrationFuncs = nil // to save memory
 }

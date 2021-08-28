@@ -51,6 +51,7 @@ func (c *PortalController) Post(ctx *gin.Context) {
 	if post.IsPrivate || post.Category.IsPrivate {
 		post.Content = ""
 	}
+	go models.UpdatePostStatisticsPageView(post.UniqueID)
 	ctx.HTML(http.StatusOK, "post.jet", gin.H{
 		"Settings":    settings,
 		"Navigations": navigations,
@@ -72,6 +73,7 @@ func (c *PortalController) Content(ctx *gin.Context) {
 	ticket2 := utils.Md5(fmt.Sprintf("%s:%d", post.Password, time2))
 
 	if ticket == ticket1 || ticket == ticket2 {
+		go models.UpdatePostStatisticsPageView(post.UniqueID)
 		ctx.JSON(http.StatusOK, gin.H{
 			"content": post.Content,
 		})
@@ -259,6 +261,12 @@ func (c *PortalController) CaptchaVerify(ctx *gin.Context) bool {
 	return captcha.VerifyString(captchaID, captchaCode)
 }
 
+func (c *PortalController) Statistics(ctx *gin.Context) {
+	uniqueID := ctx.Query("uniqueId")
+	models.UpdatePostStatisticsPageView(uniqueID)
+	ctx.JSON(http.StatusOK, gin.H{})
+}
+
 func NewPortalController(r gin.IRouter) *PortalController {
 	c := &PortalController{}
 	r.GET("/", c.Index)
@@ -274,5 +282,6 @@ func NewPortalController(r gin.IRouter) *PortalController {
 	r.GET("/page", c.Page)
 	r.GET("/page/:page", c.Page)
 	r.GET("/captcha", c.Captcha)
+	r.GET("/statistics", c.Statistics)
 	return c
 }
