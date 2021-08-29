@@ -87,7 +87,7 @@ func (ns *logNS) proccessLogData() {
 		data := <-ns.logDataQ
 
 		ymd := data.tm.Format("2006-01-02")
-		fileName := fmt.Sprintf("access-%s.log", ymd)
+		fileName := ns.LogFileName(ymd)
 		writer := ns.getWriter(fileName)
 		date := data.tm.Format("2/Jan/2006:15:04:05 -0700")
 
@@ -97,4 +97,12 @@ func (ns *logNS) proccessLogData() {
 		writer.WriteString(logMsg + "\n")
 		writer.Flush()
 	}
+}
+
+func (ns logNS) Path() string {
+	return ns.path
+}
+
+func (ns logNS) LogFileName(ymd string) string {
+	return fmt.Sprintf("access-%s.log", ymd)
 }

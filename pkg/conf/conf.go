@@ -2,6 +2,7 @@ package conf
 
 import (
 	"flag"
+	"sync"
 
 	"github.com/kelseyhightower/envconfig"
 )
@@ -24,8 +25,14 @@ type Config struct {
 	JwtMaxRefresh int    `split_words:"true" default:"24"`
 }
 
+var cfg *Config
+var wg sync.WaitGroup
+
 func ParseConfig() *Config {
-	cfg := &Config{}
+	wg.Add(1)
+	defer wg.Done()
+
+	cfg = &Config{}
 
 	flag.StringVar(&cfg.Name, "name", "elf", "server name")
 	flag.StringVar(&cfg.Host, "host", "127.0.0.1", "server host")
@@ -47,9 +54,17 @@ func ParseConfig() *Config {
 }
 
 func ParserConfigFromEnv() *Config {
-	cfg := &Config{}
+	wg.Add(1)
+	defer wg.Done()
+
+	cfg = &Config{}
 	if err := envconfig.Process("elf", cfg); err != nil {
 		panic(err)
 	}
+	return cfg
+}
+
+func GetConfig() *Config {
+	wg.Wait()
 	return cfg
 }

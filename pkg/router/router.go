@@ -56,6 +56,7 @@ func NewRouter(cfg *conf.Config) *gin.Engine {
 	controllers.NewPostController(apiRouter)
 	controllers.NewCategoryController(apiRouter)
 	controllers.NewCommentController(apiRouter)
+	controllers.NewLogController(apiRouter)
 
 	return router
 }
