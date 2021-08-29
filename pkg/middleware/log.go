@@ -87,7 +87,7 @@ func (ns *logNS) proccessLogData() {
 		data := <-ns.logDataQ
 
 		ymd := data.tm.Format("2006-01-02")
-		fileName := fmt.Sprintf("elf-%s.log", ymd)
+		fileName := fmt.Sprintf("access-%s.log", ymd)
 		writer := ns.getWriter(fileName)
 		date := data.tm.Format("2/Jan/2006:15:04:05 -0700")
 
