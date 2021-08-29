@@ -26,7 +26,7 @@ func InitDB(host string, port int, user string, pwd string, database string, deb
 		user, pwd, host, port, database,
 	)
 	logMode := logger.Info
-	if debug {
+	if !debug {
 		logMode = logger.Warn
 	}
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
