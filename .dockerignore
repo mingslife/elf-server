@@ -3,3 +3,8 @@ Dockerfile
 docker-compose.yml
 
 .git/
+
+.DS_Store
+/upload/
+/log/
+/mariadb/
