@@ -1,13 +1,15 @@
 package controllers
 
 import (
-	"fmt"
 	"image"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
@@ -18,15 +20,15 @@ import (
 type UploadController struct{}
 
 func (c *UploadController) UploadFile(ctx *gin.Context) {
-	fileName, _, _, _ := c.saveUploadedFile(ctx)
+	_, filePath, _, _ := c.saveUploadedFile(ctx)
 
-	path := c.getPath(fileName)
+	path := c.getPath(filePath)
 
 	ctx.JSON(http.StatusCreated, gin.H{"path": path})
 }
 
 func (c *UploadController) UploadImage(ctx *gin.Context) {
-	fileName, filePath, suffix, _ := c.saveUploadedFile(ctx)
+	_, filePath, suffix, _ := c.saveUploadedFile(ctx)
 	if matched, _ := regexp.MatchString("jpg|jpeg|png|gif|tif|tiff|bmp", suffix); !matched {
 		os.Remove(filePath)
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -41,8 +43,9 @@ func (c *UploadController) UploadImage(ctx *gin.Context) {
 	height, _ := strconv.Atoi(ctx.DefaultPostForm("height", "1000"))
 
 	if compress {
-		fileName = utils.NewUUID() + ".png"
-		imagePath = path.Join("upload", fileName)
+		fileName := utils.NewUUID() + ".png"
+		fileDir := c.getUploadFileDir()
+		imagePath = path.Join(fileDir, fileName)
 		src, err := imaging.Open(filePath, imaging.AutoOrientation(true))
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{})
@@ -59,7 +62,7 @@ func (c *UploadController) UploadImage(ctx *gin.Context) {
 		os.Remove(filePath)
 	}
 
-	path := c.getPath(fileName)
+	path := c.getPath(imagePath)
 
 	ctx.JSON(http.StatusCreated, gin.H{"path": path})
 }
@@ -68,14 +71,24 @@ func (c *UploadController) saveUploadedFile(ctx *gin.Context) (fileName, filePat
 	file, _ := ctx.FormFile("file")
 	suffix = path.Ext(file.Filename)
 	fileName = utils.NewUUID() + suffix
-	filePath = path.Join("upload", fileName)
+	fileDir := c.getUploadFileDir()
+	filePath = path.Join(fileDir, fileName)
 	fileSize = file.Size
 	ctx.SaveUploadedFile(file, filePath)
 	return
 }
 
-func (c *UploadController) getPath(fileName string) string {
-	return fmt.Sprintf("/upload/%s", fileName)
+func (c *UploadController) getPath(filePath string) string {
+	path := strings.ReplaceAll(filepath.Clean("/"+filePath), `\`, `/`)
+	return path
+}
+
+func (c *UploadController) getUploadFileDir() string {
+	fileDir := path.Join("upload", time.Now().Local().Format("20060102"))
+	if !utils.IsFileExists(fileDir) {
+		os.MkdirAll(fileDir, os.ModePerm)
+	}
+	return fileDir
 }
 
 func NewUploadController(r gin.IRouter) *UploadController {
