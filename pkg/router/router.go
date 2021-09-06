@@ -58,5 +58,7 @@ func NewRouter(cfg *conf.Config) *gin.Engine {
 	controllers.NewCommentController(apiRouter)
 	controllers.NewLogController(apiRouter)
 
+	router.NoRoute(controllers.NoRoute)
+
 	return router
 }

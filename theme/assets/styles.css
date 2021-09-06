@@ -140,3 +140,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.elf-jumbotron {
+  background-color: #eee;
+}

@@ -1,4 +1,11 @@
 {{ extends "layout.jet" }}
 {{ block body() }}
-<p>Oops, something went wrong:(</p>
+  {{ textOops := map("en", "Oops...", "zh", "哎呀……") }}
+  {{ textMessage := map("en", "It seems like something went wrong :(", "zh", "似乎什么东西出错了 :(") }}
+  {{ textGoBackHome := map("en", "Go back home", "zh", "返回首页") }}
+<div class="jumbotron elf-jumbotron">
+  <h1 class="display-4">{{ textOops[locale] }}</h1>
+  <p class="lead">{{ textMessage[locale] }}</p>
+  <a class="btn btn-dark" href="/" role="button">{{ textGoBackHome[locale] }}</a>
+</div>
 {{ end }}

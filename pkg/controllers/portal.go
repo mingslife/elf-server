@@ -48,6 +48,16 @@ func (c *PortalController) Post(ctx *gin.Context) {
 	route := ctx.Param("route")
 
 	post := models.GetPostForPortal(route)
+	if post == nil {
+		ctx.HTML(http.StatusNotFound, "error.jet", gin.H{
+			"Settings":    settings,
+			"Navigations": navigations,
+			"Title":       settings["app.title"],
+			"Keywords":    settings["app.keywords"],
+			"Description": settings["app.description"],
+		})
+		return
+	}
 	if post.IsPrivate || post.Category.IsPrivate {
 		post.Content = ""
 	}

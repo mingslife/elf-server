@@ -28,6 +28,10 @@
     color: #999;
   }
 
+  .elf-jumbotron {
+    background-color: #333;
+  }
+
   .markdown-body h1 .octicon-link,
   .markdown-body h2 .octicon-link,
   .markdown-body h3 .octicon-link,
