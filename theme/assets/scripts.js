@@ -179,6 +179,9 @@ $(() => {
       return `<button class="dropdown-item" type="button" data-elf-menu="${id}">${spaces.slice(0, level - maxLevel).join('') + title}</button>`
     }
   }).map(_ => _()).join('')
+  if (menu !== '') {
+    $('#elf-corner__menu-group').show()
+  }
   $('#elf-corner__menu').html(menu)
   $('#elf-corner__menu .dropdown-item').click(function() {
     let id = $(this).attr('data-elf-menu')
