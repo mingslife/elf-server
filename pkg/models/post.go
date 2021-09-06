@@ -228,6 +228,24 @@ func GetPostForPortal(route string) *Post {
 	return &v
 }
 
+func GetPostForPortalByUniqueID(uniqueID string) *Post {
+	var v Post
+	if err := DB.Select([]string{
+		"id", "unique_id", "title", "posts.keywords", "posts.description", "user_id", "category_id", "cover", "source_type", "content", "route", "is_published", "published_at", "is_private", "password", "is_comment_enabled", "is_comment_shown", "posts.created_at", "posts.updated_at",
+	}).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select([]string{"id", "username", "nickname", "avatar"})
+		}).
+		Preload("Category", func(db *gorm.DB) *gorm.DB {
+			return db.Select([]string{"id", "category_name", "route", "is_private"})
+		}).
+		Where("is_published = 1").
+		Take(&v, "unique_id = ?", uniqueID).Error; err != nil {
+		return nil
+	}
+	return &v
+}
+
 func GetPostByRoute(route string) *Post {
 	routeHash := utils.Md5(route)
 	var v Post

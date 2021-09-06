@@ -14,6 +14,7 @@
   {{ postLink := "/post/" + .Post.Route }}
   {{ authorLink := "/user/" + .Post.User.Username }}
   {{ categoryLink := "/category/" + .Post.Category.Route }}
+<script>window.uniqueId = '{{ .Post.UniqueID }}'</script>
 <article class="elf-post">
   <div class="mx-auto elf-post__meta">
     <div>
@@ -140,13 +141,7 @@
     <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="0,10">
       <i class="fa fa-bars"></i>
     </button>
-    <div class="dropdown-menu dropdown-menu-right elf-corner__menu" id="elf-corner__menu">
-      <a class="dropdown-item" href="#">Action</a>
-      <a class="dropdown-item" href="#">Another action</a>
-      <a class="dropdown-item" href="#">Something else here</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
-    </div>
+    <div class="dropdown-menu dropdown-menu-right elf-corner__menu" id="elf-corner__menu"></div>
   </div>
   <button type="button" class="btn btn-dark" id="gotop-button">
     <i class="fa fa-chevron-up"></i>

@@ -13,11 +13,11 @@ $(() => {
 
   // 1. fetch content
   let fetchContent = () => {
-    let route = location.pathname.split('/')[2]
+    let uniqueId = window.uniqueId
     let password = $('#content-password').val()
     let time = Math.ceil(new Date().getTime() / 60000)
     let ticket = md5(`${password}:${time}`)
-    axios.get(`/content/${route}?ticket=${ticket}`).then(res => {
+    axios.get(`/content/${uniqueId}?ticket=${ticket}`).then(res => {
       let content = res.data.content
       $('#content-form').remove()
       $('#content-body').html(content)
@@ -35,8 +35,8 @@ $(() => {
 
   // 2. fetch comments
   let fetchComments = () => {
-    let route = location.pathname.split('/')[2]
-    axios.get(`/comment/${route}`).then(res => {
+    let uniqueId = window.uniqueId
+    axios.get(`/comment/${uniqueId}`).then(res => {
       let html = ''
       for (let i in res.data) {
         let comment = res.data[i]
@@ -103,9 +103,9 @@ $(() => {
   })
   $('#comment-captcha-image').click(refreshCommentCaptchaImage)
   window.commentSubmit = () => {
-    let route = location.pathname.split('/')[2]
+    let uniqueId = window.uniqueId
     let captcha = $('#comment-captcha').val()
-    axios.post(`/comment/${route}?captcha=${captcha}`, {
+    axios.post(`/comment/${uniqueId}?captcha=${captcha}`, {
       parentLevel: window['commentParentLevel'] || null,
       nickname: $('#comment-nickname').val(),
       email: $('#comment-email').val(),

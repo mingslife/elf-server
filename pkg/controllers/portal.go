@@ -63,10 +63,10 @@ func (c *PortalController) Post(ctx *gin.Context) {
 }
 
 func (c *PortalController) Content(ctx *gin.Context) {
-	route := ctx.Param("route")
+	uniqueID := ctx.Param("uniqueId")
 	ticket := ctx.Query("ticket")
 
-	post := models.GetPostForPortal(route)
+	post := models.GetPostForPortalByUniqueID(uniqueID)
 	time1 := int(math.Floor(float64(time.Now().Unix()) / 60))
 	time2 := time1 + 1
 	ticket1 := utils.Md5(fmt.Sprintf("%s:%d", post.Password, time1))
@@ -83,8 +83,8 @@ func (c *PortalController) Content(ctx *gin.Context) {
 }
 
 func (c *PortalController) Comments(ctx *gin.Context) {
-	route := ctx.Param("route")
-	post := models.GetPostByRoute(route)
+	uniqueID := ctx.Param("uniqueId")
+	post := models.GetPostForPortalByUniqueID(uniqueID)
 	postID := post.ID
 	if postID != 0 && post.IsCommentShown {
 		comments, _ := models.GetCommentsByPostIDForPortal(postID)
@@ -112,8 +112,8 @@ func (c *PortalController) Comment(ctx *gin.Context) {
 	ip := ctx.ClientIP()
 	userAgent := ctx.GetHeader("User-Agent")
 
-	route := ctx.Param("route")
-	post := models.GetPostByRoute(route)
+	uniqueID := ctx.Param("uniqueId")
+	post := models.GetPostForPortalByUniqueID(uniqueID)
 	postID := post.ID
 	if postID != 0 && post.IsCommentShown && post.IsCommentEnabled {
 		var comment CommentRequest
@@ -271,10 +271,10 @@ func NewPortalController(r gin.IRouter) *PortalController {
 	c := &PortalController{}
 	r.GET("/", c.Index)
 	r.GET("/post/:route", c.Post)
-	r.GET("/content/:route", c.Content)
-	r.GET("/comment/:route", c.Comments)
-	r.GET("/comment/:route/:page", c.Comments)
-	r.POST("/comment/:route", c.Comment)
+	r.GET("/content/:uniqueId", c.Content)
+	r.GET("/comment/:uniqueId", c.Comments)
+	r.GET("/comment/:uniqueId/:page", c.Comments)
+	r.POST("/comment/:uniqueId", c.Comment)
 	r.GET("/user/:username", c.User)
 	r.GET("/user/:username/:page", c.User)
 	r.GET("/category/:route", c.Category)
