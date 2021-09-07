@@ -66,10 +66,12 @@ func GetPost(id uint) *Post {
 
 func (v *Post) Save() error {
 	v.RouteHash = utils.Md5(v.Route)
+	v.UniqueID = utils.NewUUID()
 	if v.IsPublished {
 		now := time.Now()
 		v.PublishedAt = &now
 	}
+	DB.Save(&PostStatistics{UniqueID: v.UniqueID})
 	return DB.Save(v).Error
 }
 
