@@ -19,53 +19,35 @@ import (
 type PortalController struct{}
 
 func (c *PortalController) Index(ctx *gin.Context) {
-	settings := models.GetAllSettingsMap()
-	navigations := models.GetAllNavigationsActive()
-
+	settings := ctx.GetStringMapString("_settings")
 	limit, _ := strconv.Atoi(settings["app.limit"])
 	total := models.CountPostsForPortal("", "")
 	pages := int(math.Ceil(float64(total) / float64(limit)))
 
 	posts := models.GetPostsForPortal("", "", limit, 1)
-	ctx.HTML(http.StatusOK, "index.jet", gin.H{
-		"Settings":    settings,
-		"Navigations": navigations,
-		"Title":       settings["app.title"],
-		"Keywords":    settings["app.keywords"],
-		"Description": settings["app.description"],
-		"Posts":       posts,
-		"Limit":       limit,
-		"Page":        1,
-		"Total":       total,
-		"Pages":       pages,
+	c.HTML(ctx, http.StatusOK, "index.jet", gin.H{
+		"Posts": posts,
+		"Limit": limit,
+		"Page":  1,
+		"Total": total,
+		"Pages": pages,
 	})
 }
 
 func (c *PortalController) Post(ctx *gin.Context) {
-	settings := models.GetAllSettingsMap()
-	navigations := models.GetAllNavigationsActive()
-
 	route := ctx.Param("route")
 
 	post := models.GetPostForPortal(route)
 	if post == nil {
-		ctx.HTML(http.StatusNotFound, "error.jet", gin.H{
-			"Settings":    settings,
-			"Navigations": navigations,
-			"Title":       settings["app.title"],
-			"Keywords":    settings["app.keywords"],
-			"Description": settings["app.description"],
-		})
+		c.HTML(ctx, http.StatusNotFound, "error.jet", gin.H{})
 		return
 	}
 	if post.IsPrivate || post.Category.IsPrivate {
 		post.Content = ""
 	}
 	go models.UpdatePostStatisticsPageView(post.UniqueID)
-	ctx.HTML(http.StatusOK, "post.jet", gin.H{
-		"Settings":    settings,
-		"Navigations": navigations,
-		"Title":       fmt.Sprintf("%s | %s", post.Title, settings["app.title"]),
+	c.HTML(ctx, http.StatusOK, "post.jet", gin.H{
+		"Title":       post.Title,
 		"Keywords":    post.Keywords,
 		"Description": post.Description,
 		"Post":        post,
@@ -154,9 +136,7 @@ func (c *PortalController) Comment(ctx *gin.Context) {
 }
 
 func (c *PortalController) User(ctx *gin.Context) {
-	settings := models.GetAllSettingsMap()
-	navigations := models.GetAllNavigationsActive()
-
+	settings := ctx.GetStringMapString("_settings")
 	username := ctx.Param("username")
 
 	limit, _ := strconv.Atoi(settings["app.limit"])
@@ -169,10 +149,8 @@ func (c *PortalController) User(ctx *gin.Context) {
 
 	user := models.GetUserByUsername(username)
 	posts := models.GetPostsForPortal(username, "", limit, page)
-	ctx.HTML(http.StatusOK, "user.jet", gin.H{
-		"Settings":    settings,
-		"Navigations": navigations,
-		"Title":       fmt.Sprintf("%s | %s", user.Nickname, settings["app.title"]),
+	c.HTML(ctx, http.StatusOK, "user.jet", gin.H{
+		"Title":       user.Nickname,
 		"Keywords":    user.Tags,
 		"Description": user.Introduction,
 		"User":        user,
@@ -185,9 +163,7 @@ func (c *PortalController) User(ctx *gin.Context) {
 }
 
 func (c *PortalController) Category(ctx *gin.Context) {
-	settings := models.GetAllSettingsMap()
-	navigations := models.GetAllNavigationsActive()
-
+	settings := ctx.GetStringMapString("_settings")
 	categoryRoute := ctx.Param("route")
 
 	limit, _ := strconv.Atoi(settings["app.limit"])
@@ -200,10 +176,8 @@ func (c *PortalController) Category(ctx *gin.Context) {
 
 	category := models.GetCategoryByRoute(categoryRoute)
 	posts := models.GetPostsForPortal("", categoryRoute, limit, page)
-	ctx.HTML(http.StatusOK, "category.jet", gin.H{
-		"Settings":    settings,
-		"Navigations": navigations,
-		"Title":       fmt.Sprintf("%s | %s", category.CategoryName, settings["app.title"]),
+	c.HTML(ctx, http.StatusOK, "category.jet", gin.H{
+		"Title":       category.CategoryName,
 		"Keywords":    category.Keywords,
 		"Description": category.Description,
 		"Category":    category,
@@ -216,9 +190,7 @@ func (c *PortalController) Category(ctx *gin.Context) {
 }
 
 func (c *PortalController) Page(ctx *gin.Context) {
-	settings := models.GetAllSettingsMap()
-	navigations := models.GetAllNavigationsActive()
-
+	settings := ctx.GetStringMapString("_settings")
 	limit, _ := strconv.Atoi(settings["app.limit"])
 	page, err := strconv.Atoi(ctx.Param("page"))
 	if err != nil {
@@ -228,28 +200,17 @@ func (c *PortalController) Page(ctx *gin.Context) {
 	pages := int(math.Ceil(float64(total) / float64(limit)))
 
 	if page > pages {
-		ctx.HTML(http.StatusBadRequest, "error.jet", gin.H{
-			"Settings":    settings,
-			"Navigations": navigations,
-			"Title":       settings["app.title"],
-			"Keywords":    settings["app.keywords"],
-			"Description": settings["app.description"],
-		})
+		c.HTML(ctx, http.StatusBadRequest, "error.jet", gin.H{})
 		return
 	}
 
 	posts := models.GetPostsForPortal("", "", limit, page)
-	ctx.HTML(http.StatusOK, "page.jet", gin.H{
-		"Settings":    settings,
-		"Navigations": navigations,
-		"Title":       settings["app.title"],
-		"Keywords":    settings["app.keywords"],
-		"Description": settings["app.description"],
-		"Posts":       posts,
-		"Limit":       limit,
-		"Page":        page,
-		"Total":       total,
-		"Pages":       pages,
+	c.HTML(ctx, http.StatusOK, "page.jet", gin.H{
+		"Posts": posts,
+		"Limit": limit,
+		"Page":  page,
+		"Total": total,
+		"Pages": pages,
 	})
 }
 
@@ -277,8 +238,36 @@ func (c *PortalController) Statistics(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{})
 }
 
+func (c *PortalController) HTML(ctx *gin.Context, code int, name string, obj gin.H) {
+	settings := ctx.GetStringMapString("_settings")
+	appTitle := settings["app.title"]
+	obj["Settings"] = settings
+	obj["Navigations"], _ = ctx.Get("_navigations")
+	if title, ok := obj["Title"]; !ok {
+		obj["Title"] = appTitle
+	} else {
+		obj["Title"] = fmt.Sprintf("%s | %s", title, appTitle)
+	}
+	if _, ok := obj["Keywords"]; !ok {
+		obj["Keywords"] = settings["app.keywords"]
+	}
+	if _, ok := obj["Description"]; !ok {
+		obj["Description"] = settings["app.description"]
+	}
+	ctx.HTML(code, name, obj)
+}
+
+func (c *PortalController) Common(ctx *gin.Context) {
+	settings := models.GetAllSettingsMap()
+	navigations := models.GetAllNavigationsActive()
+	ctx.Set("_settings", settings)
+	ctx.Set("_navigations", navigations)
+	ctx.Next()
+}
+
 func NewPortalController(r gin.IRouter) *PortalController {
 	c := &PortalController{}
+	r.Use(c.Common)
 	r.GET("/", c.Index)
 	r.GET("/post/:route", c.Post)
 	r.GET("/content/:uniqueId", c.Content)
