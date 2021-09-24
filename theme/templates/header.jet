@@ -3,7 +3,7 @@
 <header class="my-3">
   <nav class="navbar navbar-expand-lg elf-navbar">
     <div class="container">
-      <a class="navbar-brand" href="/">{{ .Settings["app.title"] }}</a>
+      <a class="navbar-brand" href="/">{{ .Settings["app.brand"] | raw }}</a>
       <button class="navbar-toggler border-0 pr-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fa fa-bars"></i>
       </button>
