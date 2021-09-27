@@ -1,0 +1,13 @@
+<div class="d-none d-md-flex flex-column elf-corner">
+  <button type="button" class="btn btn-dark" @click="gotop" v-if="documentScrollTop > 300">
+    <i class="fa fa-chevron-up"></i>
+  </button>
+  <div class="btn-group dropup" id="elf-corner__menu-group" v-if="postDirectories.length > 1">
+    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="0,10">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right elf-corner__menu">
+      <button class="dropdown-item" type="button" v-for="(directory, index) in postDirectories" :key="index" :class="[directory.active ? 'active' : '']" v-text="directory.text" @click="postJumpDirectory(directory)"></button>
+    </div>
+  </div>
+</div>

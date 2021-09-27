@@ -10,11 +10,11 @@
   {{ textCaptcha := map("en", "Captcha", "zh", "验证码") }}
   {{ textClose := map("en", "Close", "zh", "关闭") }}
   {{ textSubmit := map("en", "Submit", "zh", "提交") }}
+  {{ textPassword := map("en", "Password", "zh", "密码") }}
 
   {{ postLink := "/post/" + .Post.Route }}
   {{ authorLink := "/user/" + .Post.User.Username }}
   {{ categoryLink := "/category/" + .Post.Category.Route }}
-<script>window.uniqueId = '{{ .Post.UniqueID }}'</script>
 <article class="elf-post">
   <div class="mx-auto elf-post__meta">
     <div>
@@ -36,25 +36,6 @@
   <div class="rounded mt-5 elf-post__cover" style="background-image: url({{ .Post.Cover }});"></div>
   {{ end }}
   <div class="my-5">
-  {{ if .Post.IsPrivate || .Post.Category.IsPrivate }}
-    <div class="card mx-auto elf-post__content elf-post__content--private" id="content-form">
-      <div class="card-body">
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <i class="fa fa-lock"></i>
-            </span>
-          </div>
-          <input type="text" class="form-control" placeholder="Password" id="content-password" />
-          <div class="input-group-append">
-            <button class="btn btn-secondary" type="button" id="content-button">
-              <i class="fa fa-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  {{ end }}
     <div class="mx-auto elf-post__content markdown-body">
       <div id="content-body">
         {{ .Post.Content | raw }}
@@ -62,6 +43,26 @@
 
       <div class="text-center pt-5">
         <small class="text-muted">{{ textLastUpdatedAt[locale] }} {{ .Post.UpdatedAt }}</small>
+      </div>
+    </div>
+
+    <div class="card mx-auto mt-3 elf-post__private" v-if="postForm">
+      <div class="card-body">
+        <form @submit="postGetContent">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fa fa-lock"></i>
+              </span>
+            </div>
+            <input type="text" class="form-control" placeholder="{{ textPassword[locale] }}" autocomplete="off" v-model="postPassword" />
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="button" @click="postGetContent">
+                <i class="fa fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -78,17 +79,24 @@
     {{ end }}
 
   <div id="comments-wrapper">
-    <!--<div class="elf-comment">
+    <div class="elf-comment" v-for="comment in postComments" :key="comment.level">
       <div class="elf-comment__meta">
-        <a class="text-muted" href="#comment-1" name="comment-1">#1</a>
-        <strong>Ming</strong>
-        <small class="text-muted">2021-02-24 16:37:16 +0800 CST</small>
+        <a class="text-muted" :href="`#comment-${comment.level}`" :name="`comment-${comment.level}`" v-text="`#${comment.level}`"></a>
+        <strong v-text="comment.nickname"></strong>
+        <small class="text-muted" v-text="datetimeFormat(comment.commentedAt)"></small>
         <div class="float-right elf-comment__actions">
-          <a href="#"><i class="fa fa-reply"></i></a>
+          <a data-toggle="modal" data-target="#comment-modal" @click="postCommentParentLevel = comment.level"><i class="fa fa-reply"></i></a>
         </div>
       </div>
-      <div class="elf-comment__content">Content here.</div>
-    </div>-->
+      <div class="elf-comment__content">
+        <div v-if="Boolean(comment.parentLevel)">
+          <span>To</span>
+          <strong v-text="comment.parentNickname"></strong>
+          <span>(<a class="text-muted" :href="`#comment-${comment.parentLevel}`" v-text="`#${comment.parentLevel}`"></a>):</span>
+        </div>
+        <div v-text="comment.content"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -101,27 +109,27 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form onsubmit="commentSubmit(); return false">
+      <form @submit="postSubmitComment">
         <div class="modal-body">
           <div class="form-group">
-            <label for="comment-nickname">{{ textNickname[locale] }}</label>
-            <input type="text" class="form-control" id="comment-nickname" required maxlength="64" />
+            <label>{{ textNickname[locale] }}</label>
+            <input type="text" class="form-control" v-model="postComment.nickname" required maxlength="64" />
           </div>
           <div class="form-group">
-            <label for="comment-email">{{ textEmail[locale] }}</label>
-            <input type="email" class="form-control" id="comment-email" required maxlength="255" />
+            <label>{{ textEmail[locale] }}</label>
+            <input type="email" class="form-control" v-model="postComment.email" required maxlength="255" />
           </div>
           <div class="form-group">
-            <label for="comment-content">{{ textContent[locale] }}</label>
-            <textarea class="form-control" id="comment-content" rows="6" style="resize: none;" required maxlength="1000"></textarea>
+            <label>{{ textContent[locale] }}</label>
+            <textarea class="form-control" v-model="postComment.content" rows="6" style="resize: none;" required maxlength="1000"></textarea>
           </div>
           <div class="form-group">
-            <label for="comment-captcha">{{ textCaptcha[locale] }}</label>
+            <label>{{ textCaptcha[locale] }}</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="comment-captcha" required minlength="6" maxlength="6" />
+              <input type="text" class="form-control" v-model="postComment.captcha" required minlength="6" maxlength="6" />
               <div class="input-group-append">
                 <span class="input-group-text p-0">
-                  <img class="elf-captcha__image" src="" alt="captcha" id="comment-captcha-image" />
+                  <img class="elf-captcha__image" :src="postCaptchaUrl" v-if="Boolean(postCaptchaUrl)" alt="captcha" @click="postRefreshCaptcha" />
                 </span>
               </div>
             </div>
@@ -136,19 +144,13 @@
   </div>
 </div>
 
-<div class="d-none d-md-flex flex-column elf-corner">
-  <div class="btn-group dropup" id="elf-corner__menu-group" style="display: none;">
-    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-offset="0,10">
-      <i class="fa fa-bars"></i>
-    </button>
-    <div class="dropdown-menu dropdown-menu-right elf-corner__menu" id="elf-corner__menu"></div>
-  </div>
-  <button type="button" class="btn btn-dark" id="gotop-button">
-    <i class="fa fa-chevron-up"></i>
-  </button>
-</div>
-
-<script>window.fetchComments = true</script>
+<script>
+window.params.kind = 'post'
+window.params.data = {
+  uniqueId: '{{ .Post.UniqueID }}',
+  private: {{ .Post.IsPrivate || .Post.Category.IsPrivate }}
+}
+</script>
   {{ end }}
 
 {{ end }}

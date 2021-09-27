@@ -72,7 +72,7 @@
 .elf-post__content {
   max-width: 800px;
 }
-.elf-post__content.elf-post__content--private {
+.elf-post__private {
   max-width: 360px;
 }
 
@@ -103,7 +103,10 @@
 }
 .elf-comment__actions {}
 .elf-comment__actions a {
-  color: #999;
+  cursor: pointer;
+}
+.elf-comment__actions a>i {
+  color: #777;
 }
 
 .elf-captcha__image {
@@ -139,6 +142,10 @@
   max-width: 280px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.elf-corner__menu .dropdown-item.active,
+.elf-corner__menu .dropdown-item:active {
+  background-color: #333;
 }
 
 .elf-jumbotron {

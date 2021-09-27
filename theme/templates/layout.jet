@@ -22,11 +22,15 @@
   </head>
 
   <body>
-    {{ include "header.jet" }}
-    <main class="container elf-main">
-      {{ yield body() }}
-    </main>
-    {{ include "footer.jet" }}
+    <script>window.params = { kind: '', data: {} }</script>
+    <div id="elf-app">
+      {{ include "header.jet" }}
+      <main class="container elf-main">
+        {{ yield body() }}
+      </main>
+      {{ include "footer.jet" }}
+      {{ include "corner.jet" }}
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha256-sCElQ8xaSgoxwbWp0eiXMmGZIRa0z94+ffzzO06BqXs=" crossorigin="anonymous"></script>
@@ -36,6 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/plugin/relativeTime.js" integrity="sha256-JS5r5fGB+8l8t8qJSB5d3t5lJjQA8pKh4Vw6pOTglfw=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.0.1/build/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" integrity="sha256-Eb6SfNpZyLYBnrvqg4KFxb6vIRg+pLg9vU5Pv5QTzko=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js" integrity="sha256-kXTEJcRFN330VirZFl6gj9+UM6gIKW195fYZeR3xDhc=" crossorigin="anonymous"></script>
     <script src="/assets/scripts.js"></script>
   </body>
 </html>
