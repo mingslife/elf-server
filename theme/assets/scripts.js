@@ -13,12 +13,8 @@ const app = new Vue({
     postDirectories: []
   },
   computed: {
-    pageKind () {
-      return window.params.kind
-    },
-    pageData () {
-      return window.params.data
-    }
+    pageKind: () => window.params.kind,
+    pageData: () => window.params.data
   },
   watch: {
     documentScrollTop (v) {
@@ -61,7 +57,6 @@ const app = new Vue({
         this.$nextTick(() => {
           this.postContentInit()
         })
-        // initCopy()
       }).catch(err => {
         alert('Incorrect password!')
       })
@@ -122,6 +117,26 @@ const app = new Vue({
     postContentInit () {
       this.postGenerateDirectories()
       hljs.highlightAll()
+      $('#content-body pre').each((_, element) => {
+        $(element).before(`
+        <div class="position-relative float-right elf-copy">
+          <button type="button" class="btn bg-white btn-sm text-muted m-1 elf-copy__button">
+            <i class="fa fa-copy"></i>
+          </button>
+        </div>
+        `)
+      })
+      new ClipboardJS('.elf-copy__button', {
+        text: (trigger) => $(trigger).parent().next().text()
+      }).on('success', e => {
+        $(e.trigger).tooltip({
+          title: 'OK',
+          trigger: 'manual'
+        }).tooltip('show')
+        setTimeout(() => {
+          $(e.trigger).tooltip('hide')
+        }, 1500)
+      })
     },
     // init
     initCommon () {},
@@ -145,7 +160,6 @@ const app = new Vue({
 
     // init
     this.initCommon()
-    console.log(this.pageKind)
     switch (this.pageKind) {
     case 'post':
       this.initPost()
