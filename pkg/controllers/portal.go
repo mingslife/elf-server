@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 
+	"elf-server/pkg/components"
 	"elf-server/pkg/models"
 	"elf-server/pkg/utils"
 )
@@ -214,6 +215,10 @@ func (c *PortalController) Page(ctx *gin.Context) {
 	})
 }
 
+func (c *PortalController) Reader(ctx *gin.Context) {
+	c.HTML(ctx, http.StatusOK, "reader.jet", gin.H{})
+}
+
 func (c *PortalController) Captcha(ctx *gin.Context) {
 	var buf bytes.Buffer
 
@@ -267,6 +272,7 @@ func (c *PortalController) Common(ctx *gin.Context) {
 
 func NewPortalController(r gin.IRouter) *PortalController {
 	c := &PortalController{}
+	captcha.SetCustomStore(components.NewCacheCaptchaStore(10 * time.Minute))
 	r.Use(c.Common)
 	r.GET("/", c.Index)
 	r.GET("/post/:route", c.Post)
@@ -280,6 +286,7 @@ func NewPortalController(r gin.IRouter) *PortalController {
 	r.GET("/category/:route/:page", c.Category)
 	r.GET("/page", c.Page)
 	r.GET("/page/:page", c.Page)
+	r.GET("/reader", c.Reader)
 	r.GET("/captcha", c.Captcha)
 	r.GET("/statistics", c.Statistics)
 	return c
