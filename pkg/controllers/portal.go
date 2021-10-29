@@ -95,10 +95,9 @@ type CommentRequest struct {
 }
 
 func (c *PortalController) Comment(ctx *gin.Context) {
-	if !c.CaptchaVerify(ctx) {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Wrong captcha!",
-		})
+	reader, _ := GetReaderFromCookie(ctx)
+	if reader == nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{})
 		return
 	}
 
@@ -122,11 +121,10 @@ func (c *PortalController) Comment(ctx *gin.Context) {
 		}
 		(&models.Comment{
 			PostID:    postID,
+			ReaderID:  reader.ID,
 			IP:        ip,
 			UserAgent: userAgent,
 			ParentID:  parentID,
-			Nickname:  comment.Nickname,
-			Email:     comment.Email,
 			Content:   comment.Content,
 		}).Save()
 

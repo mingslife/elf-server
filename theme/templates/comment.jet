@@ -1,0 +1,58 @@
+{{ textWriteComment := map("en", "Write comment", "zh", "写评论") }}
+{{ textCommentIsClosed := map("en", "Comment is closed", "zh", "评论已关闭") }}
+{{ textComment := map("en", "Comment", "zh", "评论") }}
+{{ textTo := map("en", "To", "zh", "回复") }}
+{{ textOK := map("en", "OK", "zh", "确认") }}
+{{ textCancel := map("en", "Cancel", "zh", "取消") }}
+{{ textLogin := map("en", "Login to comment", "zh", "请先登录") }}
+<div class="elf-comments" v-if="pageData.showComment">
+  <hr />
+  <button type="button" class="btn btn-light btn-block rounded-0" v-if="!postIsLogin" @click="postToLogin">{{ textLogin[locale] }}</button>
+  <button type="button" class="btn btn-light btn-block rounded-0" data-toggle="modal" data-target="#comment-modal" :disabled="!pageData.isCommentEnabled" v-text="pageData.isCommentEnabled ? '{{ textWriteComment[locale] }}' : '{{ textCommentIsClosed[locale] }}'" v-if="postIsLogin"></button>
+  <div class="elf-comment" v-for="comment in postComments" :key="comment.level">
+    <div class="elf-comment__meta">
+      <a class="text-muted" :href="`#comment-${comment.level}`" :name="`comment-${comment.level}`" v-text="`#${comment.level}`"></a>
+      <a :href="`/author/${comment.username}`" v-if="comment.username !== null">
+        <strong v-text="comment.nickname"></strong>
+      </a>
+      <strong v-text="comment.nickname" v-if="comment.username === null"></strong>
+      <small class="text-muted" v-text="datetimeFormat(comment.commentedAt)"></small>
+      <div class="float-right elf-comment__actions">
+        <a data-toggle="modal" data-target="#comment-modal" @click="postCommentParentLevel = comment.level"><i class="fa fa-reply"></i></a>
+      </div>
+    </div>
+    <div class="elf-comment__content">
+      <div v-if="Boolean(comment.parentLevel)">
+        <span>{{ textTo[locale] }}</span>
+          <a :href="`/author/${comment.parentNickname}`" v-if="comment.parentNickname !== null">
+          <strong v-text="comment.nickname"></strong>
+        </a>
+        <strong v-text="comment.parentNickname" v-if="comment.parentNickname === null"></strong>
+        <span>(<a class="text-muted" :href="`#comment-${comment.parentLevel}`" v-text="`#${comment.parentLevel}`"></a>):</span>
+      </div>
+      <div v-text="comment.content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="comment-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content rounded-0 shadow">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="comment-modal-title">{{ textComment[locale] }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form @submit="postSubmitComment">
+        <div class="modal-body">
+          <textarea class="form-control border-dark rounded-0 shadow-none" v-model="postComment.content" rows="9" style="resize: none;" required maxlength="1000"></textarea>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-dark rounded-0" data-dismiss="modal">{{ textCancel[locale] }}</button>
+          <button type="submit" class="btn btn-dark rounded-0" :disabled="false">{{ textOK[locale] }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

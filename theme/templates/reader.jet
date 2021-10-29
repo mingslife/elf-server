@@ -1,0 +1,150 @@
+{{ extends "layout.jet" }}
+{{ block body() }}
+  {{ textInfo := map("en", "Info", "zh", "信息") }}
+  {{ textSignIn := map("en", "Sign In", "zh", "登录") }}
+  {{ textSignUp := map("en", "Sign Up", "zh", "注册") }}
+  {{ textEmail := map("en", "Email", "zh", "邮箱") }}
+  {{ textNickname := map("en", "Nickname", "zh", "昵称") }}
+  {{ textGender := map("en", "Gender", "zh", "性别") }}
+  {{ textBirthday := map("en", "Birthday", "zh", "生日") }}
+  {{ textPhone := map("en", "Phone", "zh", "电话") }}
+  {{ textValidateCode := map("en", "Validate Code", "zh", "验证码") }}
+  {{ textRequired := map("en", "required", "zh", "必填") }}
+  {{ textOptional := map("en", "optional", "zh", "可选") }}
+  {{ textMale := map("en", "Male", "zh", "男") }}
+  {{ textFemale := map("en", "Female", "zh", "女") }}
+  {{ textOK := map("en", "OK", "zh", "确认") }}
+  {{ textCancel := map("en", "Cancel", "zh", "取消") }}
+  {{ textSendCode := map("en", "Send Code", "zh", "发送验证码") }}
+  {{ textLogout := map("en", "Logout", "zh", "注销") }}
+  {{ textUpdate := map("en", "Logout", "zh", "更新") }}
+  {{ textSafeTip := map("en", "It'll never be shared with anyone else.", "zh", "我们不会将它泄露给其他任何人。" ) }}
+  {{ textRegisterTip := map("en", "We'll create an account for you if this email has not been registered.", "zh", "如果该邮箱还未注册过，系统将自动创建账号。") }}
+<div class="row">
+  <div class="col">
+    <div class="mt-3 mb-4">
+      <div class="elf-reader">
+        <form @submit="readerUpdateInfo" v-if="readerMode == 'info'">
+          <h3 class="pb-3">{{ textInfo[locale] }}</h3>
+          <div class="form-group">
+            <label>{{ textEmail[locale] }}</label>
+            <input type="text" class="form-control border-dark rounded-0 shadow-none" v-model="readerEmail" readonly />
+          </div>
+          <div class="form-group">
+            <label>{{ textNickname[locale] }}</label>
+            <input type="text" placeholder="{{ textRequired[locale] }}" class="form-control border-dark rounded-0 shadow-none" required v-model="readerInfoData.nickname" />
+          </div>
+          <div class="form-group">
+            <label>{{ textGender[locale] }}</label>
+            <select class="form-control border-dark rounded-0 shadow-none" v-model="readerInfoData.gender">
+              <option :value="undefined" selected>{{ textOptional[locale] }}</option>
+              <option :value="0">{{ textMale[locale] }}</option>
+              <option :value="1">{{ textFemale[locale] }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ textBirthday[locale] }}</label>
+            <input type="date" placeholder="{{ textOptional[locale] }}" class="form-control border-dark rounded-0 shadow-none" v-model="readerInfoData.birthday" />
+          </div>
+          <div class="form-group">
+            <label>{{ textPhone[locale] }}</label>
+            <input type="text" placeholder="{{ textOptional[locale] }}" class="form-control border-dark rounded-0 shadow-none" v-model="readerInfoData.phone" />
+            <small class="form-text text-muted">{{ textSafeTip[locale] }}</small>
+          </div>
+          <div class="py-3">
+            <button type="button" class="btn btn-outline-dark rounded-0" @click="readerLogout">{{ textLogout[locale] }}</button>
+            <button type="submit" class="btn btn-dark rounded-0">{{ textUpdate[locale] }}</button>
+          </div>
+        </form>
+        <form @submit="readerLogin" v-if="readerMode === 'login'">
+          <h3 class="pb-3">{{ textSignIn[locale] }}</h3>
+          <div class="form-group">
+            <label>{{ textEmail[locale] }}</label>
+            <input type="text" placeholder="{{ textRequired[locale] }}" class="form-control border-dark rounded-0 shadow-none" required v-model="readerEmail" />
+            <small class="form-text text-muted">{{ textRegisterTip[locale] }}</small>
+          </div>
+          <div class="form-group">
+            <label>{{ textValidateCode[locale] }}</label>
+            <div class="input-group mb-3">
+              <input type="text" placeholder="{{ textRequired[locale] }}" class="form-control border-dark rounded-0 shadow-none" required v-model="readerValidateCode" />
+              <div class="input-group-append">
+                <button class="btn btn-dark rounded-0" type="button" @click="readerShowCaptcha" v-text="'{{ textSendCode[locale] }}' + (readerValidateCodeTime === 0 ? '' : ` (${readerValidateCodeTime})`)" :disabled="readerValidateCodeTime !== 0">Send code</button>
+              </div>
+            </div>
+          </div>
+          <div class="py-3">
+            <button type="submit" class="btn btn-dark rounded-0">{{ textOK[locale] }}</button>
+          </div>
+        </form>
+        <form @submit="readerRegister" v-if="readerMode === 'register'">
+          <h3 class="pb-3">{{ textSignUp[locale] }}</h3>
+          <div class="form-group">
+            <label>{{ textNickname[locale] }}</label>
+            <input type="text" placeholder="{{ textRequired[locale] }}" class="form-control border-dark rounded-0 shadow-none" required v-model="readerRegisterData.nickname" />
+          </div>
+          <div class="form-group">
+            <label>{{ textGender[locale] }}</label>
+            <select class="form-control border-dark rounded-0 shadow-none" v-model="readerRegisterData.gender">
+              <option :value="undefined" selected>{{ textOptional[locale] }}</option>
+              <option :value="0">{{ textMale[locale] }}</option>
+              <option :value="1">{{ textFemale[locale] }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ textBirthday[locale] }}</label>
+            <input type="date" placeholder="{{ textOptional[locale] }}" class="form-control border-dark rounded-0 shadow-none" v-model="readerRegisterData.birthday" />
+          </div>
+          <!--<div class="form-group">
+            <label>{{ textEmail[locale] }}</label>
+            <input type="email" placeholder="{{ textRequired[locale] }}" class="form-control border-dark rounded-0 shadow-none" required v-model="readerEmail" />
+            <small class="form-text text-muted">{{ textSafeTip[locale] }}</small>
+          </div>-->
+          <div class="form-group">
+            <label>{{ textPhone[locale] }}</label>
+            <input type="text" placeholder="{{ textOptional[locale] }}" class="form-control border-dark rounded-0 shadow-none" v-model="readerRegisterData.phone" />
+            <small class="form-text text-muted">{{ textSafeTip[locale] }}</small>
+          </div>
+          <div class="py-3">
+            <button type="submit" class="btn btn-dark rounded-0">{{ textOK[locale] }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="captcha-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content rounded-0 shadow">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="comment-modal-title">CAPTCHA</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form @submit="readerSendCode">
+        <div class="modal-body">
+          <div class="input-group">
+            <input type="text" class="form-control border-dark rounded-0 shadow-none" v-model="readerCaptcha" required minlength="6" maxlength="6" :disabled="readerSendCoding" />
+            <div class="input-group-append">
+              <span class="input-group-text border-dark rounded-0 p-0">
+                <img class="elf-captcha" :src="readerCaptchaUrl" v-if="Boolean(readerCaptchaUrl)" alt="captcha" @click="readerRefreshCaptcha" />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-dark rounded-0" data-dismiss="modal" :disabled="readerSendCoding">{{ textCancel[locale] }}</button>
+          <button type="submit" class="btn btn-dark rounded-0" :disabled="readerSendCoding">{{ textOK[locale] }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+window.params.kind = 'reader'
+window.params.data = {
+}
+</script>
+{{ end }}

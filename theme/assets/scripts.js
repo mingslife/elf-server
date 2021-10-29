@@ -10,7 +10,19 @@ const app = new Vue({
     postComment: {},
     postCommentParentLevel: null,
     postCaptchaUrl: null,
-    postDirectories: []
+    postDirectories: [],
+    postIsLogin: false,
+    // reader
+    readerEmail: '',
+    readerValidateCode: '',
+    readerValidateCodeTime: 0,
+    readerValidateCodeTimer: null,
+    readerCaptcha: '',
+    readerCaptchaUrl: null,
+    readerMode: 'info',
+    readerRegisterData: {},
+    readerInfoData: {},
+    readerSendCoding: false
   },
   computed: {
     pageKind: () => window.params.kind,
@@ -41,6 +53,19 @@ const app = new Vue({
     },
     gotop () {
       $('html,body').animate({scrollTop: 0}, 500)
+    },
+    toast (message) {
+      setTimeout(() => {
+        let toastId = 'elf-toast-' + new Date().getTime()
+        $('#elf-toasts').prepend(`
+        <div id="${toastId}" class="toast show rounded-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+          <div class="toast-body">${message}</div>
+        </div>
+        `)
+        $(`#${toastId}`).toast('show').on('hidden.bs.toast', function() {
+          $(this).remove()
+        })
+      }, 1)
     },
     // post
     postGetContent (event) {
@@ -82,11 +107,8 @@ const app = new Vue({
       event.preventDefault()
 
       let uniqueId = this.pageData.uniqueId
-      let captcha = this.postComment.captcha
-      axios.post(`/comment/${uniqueId}?captcha=${captcha}`, {
+      axios.post(`/comment/${uniqueId}`, {
         parentLevel: this.postCommentParentLevel,
-        nickname: this.postComment.nickname,
-        email: this.postComment.email,
         content: this.postComment.content
       }).then(res => {
         $('#comment-modal').modal('hide')
@@ -138,9 +160,15 @@ const app = new Vue({
         }, 1500)
       })
     },
-    // init
-    initCommon () {},
+    postToLogin () {
+      location.href = '/reader?redirect=' + encodeURI(location.href)
+    },
     initPost () {
+      axios.get('/reader/info').then(res => {
+        this.postIsLogin = true
+      }).catch(err => {
+        this.postIsLogin = false
+      })
       this.postGetComments()
       this.postForm = this.pageData.private
       $('#comment-modal').on('show.bs.modal', () => {
@@ -153,16 +181,150 @@ const app = new Vue({
       if (!this.pageData.private) {
         this.postContentInit()
       }
+    },
+    // reader
+    readerRefreshCaptcha () {
+      if (this.readerSendCoding) {
+        return
+      }
+      this.readerCaptchaUrl = `/captcha?_t=${new Date().getTime()}`
+    },
+    readerShowCaptcha () {
+      if (/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test(this.readerEmail)) {
+        $('#captcha-modal').modal('show')
+      } else {
+        this.toast(LOCALES.reader.wrongEmailAddress)
+      }
+    },
+    readerGetInfo () {
+      axios.get('/reader/info').then(res => {
+        this.readerMode = 'info'
+        this.readerEmail = res.data.email
+        this.readerInfoData = {
+          nickname: res.data.nickname,
+          gender: res.data.gender,
+          birthday: res.data.birthday ? dayjs(res.data.birthday).format("YYYY-MM-DD") : undefined,
+          phone: res.data.phone
+        }
+      }).catch(err => {
+        this.readerMode = 'login'
+      })
+    },
+    readerUpdateInfo (event) {
+      event.preventDefault()
+
+      axios.post('/reader/info', {
+        nickname: this.readerInfoData.nickname,
+        gender: this.readerInfoData.gender,
+        birthday: new Date(this.readerInfoData.birthday),
+        phone: this.readerInfoData.phone
+      }).then(res => {
+        this.toast(LOCALES.reader.updateSuccessfully)
+        this.readerGetInfo()
+      }).catch(err => {
+        this.toast(err.response.data.message)
+      })
+    },
+    readerLogout () {
+      axios.post('/reader/logout').finally(() => {
+        this.readerInfoData = {}
+        this.readerGetInfo()
+      })
+    },
+    readerSendCode (event) {
+      event.preventDefault()
+
+      this.readerSendCoding = true
+      axios.post('/reader/code', {
+        email: this.readerEmail,
+        captcha: this.readerCaptcha
+      }).then(res => {
+        this.readerValidateCodeTime = 60
+        this.readerValidateCodeTimer = setInterval(() => {
+          this.readerValidateCodeTime -= 1
+          if (this.readerValidateCodeTime === 0) {
+            clearInterval(this.readerValidateCodeTimer)
+          }
+        }, 1000)
+        $('#captcha-modal').modal('hide')
+      }).catch(err => {
+        this.readerRefreshCaptcha()
+        this.toast(err.response.data.message)
+      }).finally(() => {
+        this.readerSendCoding = false
+      })
+    },
+    readerLogin (event) {
+      event.preventDefault()
+
+      axios.post('/reader/login', {
+        email: this.readerEmail,
+        validateCode: this.readerValidateCode
+      }).then(res => {
+        switch (res.data.result) {
+        case 0:
+          this.toast(LOCALES.reader.loginSuccessfully)
+          this.readerEmail = ''
+          this.readerValidateCode = ''
+          this.readerMode = 'info'
+          this.readerGetInfo()
+
+          let params = new URLSearchParams(location.search)
+          let redirect = params.get('redirect')
+          if (redirect) {
+            location.href = decodeURI(redirect)
+          }
+
+          break
+        case 3:
+          this.readerMode = 'register'
+          break
+        }
+      }).catch(err => {
+        this.toast(err.response.data.message)
+      })
+    },
+    readerRegister (event) {
+      event.preventDefault()
+
+      axios.post('/reader/register', {
+        email: this.readerEmail,
+        validateCode: this.readerValidateCode,
+        nickname: this.readerRegisterData.nickname,
+        gender: this.readerRegisterData.gender,
+        birthday: new Date(this.readerRegisterData.birthday),
+        phone: this.readerRegisterData.phone
+      }).then(res => {
+        this.toast(LOCALES.reader.registerSuccessfully)
+        this.readerEmail = ''
+        this.readerValidateCode = ''
+        this.readerRegisterData = {}
+        this.readerMode = 'info'
+        this.readerGetInfo()
+      }).catch(err => {
+        this.toast(err.response.data.message)
+      })
+    },
+    initReader () {
+      this.readerGetInfo()
+      $('#captcha-modal').on('show.bs.modal', () => {
+        this.readerRefreshCaptcha()
+      })
+      $('#captcha-modal').on('hidden.bs.modal', () => {
+        this.readerCaptcha = ''
+      })
     }
   },
   mounted () {
     // before init
 
     // init
-    this.initCommon()
     switch (this.pageKind) {
     case 'post':
       this.initPost()
+      break
+    case 'reader':
+      this.initReader()
       break
     /* no default */
     }

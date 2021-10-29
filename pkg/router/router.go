@@ -32,6 +32,7 @@ func NewRouter(cfg *conf.Config) *gin.Engine {
 			&middleware.LogMiddlewareConfig{Path: "./log"}))
 	}
 	controllers.NewPortalController(portalRouter)
+	controllers.NewReaderApiController(portalRouter)
 
 	apiRouter := router.Group("/api/v1")
 	apiRouter.Use(middleware.NewCorsMiddleware())
@@ -56,6 +57,7 @@ func NewRouter(cfg *conf.Config) *gin.Engine {
 	controllers.NewPostController(apiRouter)
 	controllers.NewCategoryController(apiRouter)
 	controllers.NewCommentController(apiRouter)
+	controllers.NewReaderController(apiRouter)
 	controllers.NewLogController(apiRouter)
 
 	router.NoRoute(controllers.NoRoute)

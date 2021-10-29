@@ -1,15 +1,6 @@
 {{ extends "layout.jet" }}
 {{ block body() }}
   {{ textLastUpdatedAt := map("en", "Last updated at", "zh", "最后更新于") }}
-  {{ textWriteComment := map("en", "Write comment", "zh", "写评论") }}
-  {{ textCommentIsClosed := map("en", "Comment is closed", "zh", "评论已关闭") }}
-  {{ textComment := map("en", "Comment", "zh", "评论") }}
-  {{ textNickname := map("en", "Nickname", "zh", "昵称") }}
-  {{ textEmail := map("en", "Email", "zh", "邮箱") }}
-  {{ textContent := map("en", "Content", "zh", "内容") }}
-  {{ textCaptcha := map("en", "Captcha", "zh", "验证码") }}
-  {{ textClose := map("en", "Close", "zh", "关闭") }}
-  {{ textSubmit := map("en", "Submit", "zh", "提交") }}
   {{ textPassword := map("en", "Password", "zh", "密码") }}
 
   {{ postLink := "/post/" + .Post.Route }}
@@ -68,89 +59,15 @@
   </div>
 </article>
 
-  {{ if .Settings["app.comment"] == "true" && .Post.IsCommentShown }}
-<div class="elf-comments">
-  <hr />
-
-    {{ if .Post.IsCommentEnabled }}
-  <button type="button" class="btn btn-light btn-block" data-toggle="modal" data-target="#comment-modal">{{ textWriteComment[locale] }}</button>
-    {{ else }}
-  <button type="button" class="btn btn-light btn-block" disabled>{{ textCommentIsClosed[locale] }}</button>
-    {{ end }}
-
-  <div id="comments-wrapper">
-    <div class="elf-comment" v-for="comment in postComments" :key="comment.level">
-      <div class="elf-comment__meta">
-        <a class="text-muted" :href="`#comment-${comment.level}`" :name="`comment-${comment.level}`" v-text="`#${comment.level}`"></a>
-        <strong v-text="comment.nickname"></strong>
-        <small class="text-muted" v-text="datetimeFormat(comment.commentedAt)"></small>
-        <div class="float-right elf-comment__actions">
-          <a data-toggle="modal" data-target="#comment-modal" @click="postCommentParentLevel = comment.level"><i class="fa fa-reply"></i></a>
-        </div>
-      </div>
-      <div class="elf-comment__content">
-        <div v-if="Boolean(comment.parentLevel)">
-          <span>To</span>
-          <strong v-text="comment.parentNickname"></strong>
-          <span>(<a class="text-muted" :href="`#comment-${comment.parentLevel}`" v-text="`#${comment.parentLevel}`"></a>):</span>
-        </div>
-        <div v-text="comment.content"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade elf-captcha" id="comment-modal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="comment-modal-title">{{ textComment[locale] }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form @submit="postSubmitComment">
-        <div class="modal-body">
-          <div class="form-group">
-            <label>{{ textNickname[locale] }}</label>
-            <input type="text" class="form-control" v-model="postComment.nickname" required maxlength="64" />
-          </div>
-          <div class="form-group">
-            <label>{{ textEmail[locale] }}</label>
-            <input type="email" class="form-control" v-model="postComment.email" required maxlength="255" />
-          </div>
-          <div class="form-group">
-            <label>{{ textContent[locale] }}</label>
-            <textarea class="form-control" v-model="postComment.content" rows="6" style="resize: none;" required maxlength="1000"></textarea>
-          </div>
-          <div class="form-group">
-            <label>{{ textCaptcha[locale] }}</label>
-            <div class="input-group">
-              <input type="text" class="form-control" v-model="postComment.captcha" required minlength="6" maxlength="6" />
-              <div class="input-group-append">
-                <span class="input-group-text p-0">
-                  <img class="elf-captcha__image" :src="postCaptchaUrl" v-if="Boolean(postCaptchaUrl)" alt="captcha" @click="postRefreshCaptcha" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ textClose[locale] }}</button>
-          <button type="submit" class="btn btn-dark">{{ textSubmit[locale] }}</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+{{ include "comment.jet" }}
 
 <script>
 window.params.kind = 'post'
 window.params.data = {
   uniqueId: '{{ .Post.UniqueID }}',
-  private: {{ .Post.IsPrivate || .Post.Category.IsPrivate }}
+  private: {{ .Post.IsPrivate || .Post.Category.IsPrivate }},
+  showComment: {{ .Settings["app.comment"] == "true" && .Post.IsCommentShown }},
+  isCommentEnabled: {{ .Post.IsCommentEnabled }}
 }
 </script>
-  {{ end }}
-
 {{ end }}

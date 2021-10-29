@@ -27,8 +27,8 @@ func (c *CommentController) GetOne(ctx *gin.Context) {
 }
 
 func (c *CommentController) Create(ctx *gin.Context) {
-	userID := GetAuthInfo(ctx).GetUserID()
-	user := models.GetUser(userID)
+	// userID := GetAuthInfo(ctx).GetUserID()
+	// user := models.GetUser(userID)
 
 	ip := ctx.ClientIP()
 	userAgent := ctx.GetHeader("User-Agent")
@@ -37,11 +37,11 @@ func (c *CommentController) Create(ctx *gin.Context) {
 	if err := ctx.BindJSON(&v); err != nil {
 		glog.Error(err.Error())
 	}
-	v.Nickname = user.Nickname
-	v.Email = user.Email
+	// v.Nickname = user.Nickname
+	// v.Email = user.Email
 	v.IP = ip
 	v.UserAgent = userAgent
-	v.UserID = &userID
+	// v.UserID = &userID
 	if e := v.Save(); e == nil {
 		ctx.JSON(http.StatusCreated, v)
 	} else {

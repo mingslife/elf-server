@@ -30,6 +30,8 @@
           {* <button type="button" class="btn"><i class="fa fa-moon"></i></button> *}
           {* <button type="button" class="btn"><i class="fa fa-magic"></i></button> *}
           {* <button type="button" class="btn"><i class="fa fa-ellipsis-v"></i></button> *}
+          <a class="btn" href="/reader"><i class="fa fa-book-reader"></i></a>
+          {* <button type="button" class="btn"><i class="fa fa-cog"></i></button> *}
         </form>
       </div>
     </div>

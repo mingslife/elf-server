@@ -28,11 +28,21 @@ func Md5(str string) string {
 }
 
 func RandString(length int) string {
-	rand.Seed(time.Now().UTC().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 	b := make([]byte, length)
 	for i := range b {
 		b[i] = base[rand.Intn(baseLength)]
 	}
 	randString := string(b)
 	return randString
+}
+
+func RandDigists(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = byte('0' + rand.Intn(10))
+	}
+	randDigists := string(b)
+	return randDigists
 }

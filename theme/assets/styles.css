@@ -109,7 +109,7 @@
   color: #777;
 }
 
-.elf-captcha__image {
+.elf-captcha {
   width: 108px;
   height: 36px;
   cursor: pointer;
@@ -150,4 +150,20 @@
 
 .elf-jumbotron {
   background-color: #eee;
+}
+
+.elf-reader {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.elf-toasts {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  z-index: 3000;
+}
+.elf-toasts:empty {
+  display: none;
 }
