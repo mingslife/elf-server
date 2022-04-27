@@ -1,8 +1,9 @@
 package models
 
 import (
-	"elf-server/pkg/utils"
 	"time"
+
+	"elf-server/pkg/utils"
 )
 
 const (
