@@ -40,7 +40,7 @@ type Post struct {
 }
 
 var (
-	postsFields = []string{"id", "title", "user_id", "category_id", "category_name", "source_type", "route", "is_published", "published_at", "is_private", "is_comment_enabled", "is_comment_shown", "created_at", "updated_at"}
+	postsFields = []string{"id", "title", "user_id", "category_id", "source_type", "route", "is_published", "published_at", "is_private", "is_comment_enabled", "is_comment_shown", "created_at", "updated_at"}
 	postFields  = []string{"id", "title", "keywords", "description", "user_id", "category_id", "cover", "source_type", "route", "is_published", "is_private", "password", "is_comment_enabled", "is_comment_shown", "created_at", "updated_at"}
 )
 
