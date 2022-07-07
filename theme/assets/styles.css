@@ -71,6 +71,7 @@
 }
 .elf-post__content {
   max-width: 800px;
+  /* background-color: transparent; */
 }
 .elf-post__private {
   max-width: 360px;
@@ -146,10 +147,6 @@
 .elf-corner__menu .dropdown-item.active,
 .elf-corner__menu .dropdown-item:active {
   background-color: #333;
-}
-
-.elf-jumbotron {
-  background-color: #eee;
 }
 
 .elf-reader {

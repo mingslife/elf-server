@@ -6,6 +6,6 @@
 <div class="jumbotron elf-jumbotron">
   <h1 class="display-4">{{ textOops[locale] }}</h1>
   <p class="lead">{{ textMessage[locale] }}</p>
-  <a class="btn btn-dark" href="/" role="button">{{ textGoBackHome[locale] }}</a>
+  <a class="btn btn-secondary" href="/" role="button">{{ textGoBackHome[locale] }}</a>
 </div>
 {{ end }}

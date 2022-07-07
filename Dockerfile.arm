@@ -1,0 +1,16 @@
+FROM golang:1.18 as build
+WORKDIR /app
+COPY . .
+ENV GOPROXY=https://goproxy.io,direct
+RUN GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
+  go build -ldflags -s -a -installsuffix cgo -o bin/elf-server cmd/v2/*.go
+
+FROM scratch as run
+WORKDIR /app
+VOLUME [ "/app/upload" ]
+EXPOSE 5000
+COPY --from=build /app/bin/elf-server .
+COPY resources resources
+COPY theme/assets assets
+COPY theme/templates templates
+ENTRYPOINT [ "/app/elf-server" ]

@@ -3,6 +3,6 @@
   {{ range .Posts }}
     {{ include "card.jet" }}
   {{ end }}
-  {{ pageLink := "/page/{page}" }}
+  {{ pageLink := "/posts/{page}" }}
   {{ include "pagination.jet" }}
 {{ end }}
